@@ -1,5 +1,27 @@
 const API_PATH = "http://localhost:8000/api";
 
+export async function isLoggedIn(): Promise<boolean> {
+  try {
+    const res = await getUser();
+    return res && res.email ? true : false;
+  } catch {
+    return false;
+  }
+}
+
+export async function getUser() {
+  const res = await fetch(`${API_PATH}/users/current/`, {
+    method: "GET",
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch user data");
+  }
+
+  return res.json();
+}
+
 async function getCsrfToken() {
   await fetch(`${API_PATH}/csrf/`, {
     method: "GET",
@@ -15,7 +37,8 @@ async function getCsrfToken() {
 }
 
 export async function login(email: string, password: string) {
-  let csrfToken = await getCsrfToken();
+  const csrfToken = await getCsrfToken();
+
   const res = await fetch(`${API_PATH}/users/login/`, {
     method: "POST",
     headers: {
@@ -28,15 +51,10 @@ export async function login(email: string, password: string) {
 
   if (!res.ok) {
     const errorData = await res.json();
-    throw new Error(errorData.error || "Login failed");
+    throw new Error(errorData?.error || "Login failed");
   }
 
-  const sessionid = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith("sessionid="))
-    ?.split("=")[1];
-
-  return sessionid;
+  return true; // becase res.ok==true
 }
 
 export async function logout() {

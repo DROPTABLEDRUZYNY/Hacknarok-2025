@@ -14,7 +14,6 @@ type LoginForm = {
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
-  const [sessionId, setSessionId] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -24,10 +23,10 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginForm) => {
     try {
-      const sessionId = await login(data.email, data.password);
-      setSessionId(sessionId || null);
+      await login(data.email, data.password);
+      // We trust the login function to return true or throw an error, so we don't have to call isLoggedIn();
       console.log("Logged in!");
-      router.push("/");
+      router.push("/"); // or wherever
     } catch (err) {
       setError("Invalid email or password");
     }
@@ -37,7 +36,7 @@ export default function LoginPage() {
     <div className="max-w-md mx-auto mt-10">
       <h1 className="text-2xl font-bold mb-4">Login</h1>
       {error && <p className="text-red-500">{error}</p>}
-      {sessionId && <p className="text-green-500">Session ID: {sessionId}</p>}
+
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <Input
           {...register("email", { required: "Email is required" })}
