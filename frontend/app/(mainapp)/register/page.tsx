@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { register as registerUser } from "@/services/authService";
 
 type RegisterForm = {
   email: string;
@@ -28,21 +29,15 @@ export default function RegisterPage() {
     }
 
     try {
-      const res = await fetch("http://localhost:8000/api/users/register/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: data.email, password: data.password }),
-      });
-
-      if (!res.ok) throw new Error("Registration failed");
-      setSuccess("Registered successfully!");
+      await registerUser(data.email, data.password);
       setError(null);
-      
+      setSuccess("Registered successfully!");
+
       setTimeout(() => {
         router.push("/login");
       }, 2000);
-    } catch (err) {
-      setError("Registration failed");
+    } catch (err: any) {
+      setError(err.message || "Registration failed");
       setSuccess(null);
     }
   };
@@ -66,8 +61,8 @@ export default function RegisterPage() {
             required: "Password is required",
             minLength: {
               value: 3,
-              message: "Password must be at least 3 characters long"
-            }
+              message: "Password must be at least 3 characters long",
+            },
           })}
           type="password"
           placeholder="Password"

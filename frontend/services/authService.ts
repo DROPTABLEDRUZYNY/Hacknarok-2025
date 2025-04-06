@@ -54,3 +54,21 @@ export async function logout() {
     throw new Error("Logout failed");
   }
 }
+
+export async function register(email: string, password: string) {
+  const res = await fetch(`${API_PATH}/users/register/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, password }),
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.error || "Registration failed");
+  }
+
+  return res.json();
+}
