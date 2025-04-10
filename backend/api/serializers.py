@@ -28,6 +28,7 @@ class EventSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "description",
+            "date_created",
             "date_start",
             "latitude",
             "longitude",

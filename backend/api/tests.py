@@ -72,7 +72,9 @@ class EventModelTest(TestCase):
     def test_event_creation(self):
         self.assertEqual(self.event.name, "Test Event")
         self.assertEqual(self.event.description, "Test Description")
-        self.assertEqual(self.event.date_start.isoformat(), "2025-03-28T10:00:00+01:00")
+        self.assertEqual(
+            self.event.date_start.isoformat(), "2025-03-28T10:00:00+01:00"
+        )
         self.assertEqual(self.event.latitude, 52.2297)
         self.assertEqual(self.event.longitude, 21.0122)
 
@@ -93,7 +95,7 @@ class EventSerializerTest(TestCase):
         self.assertEqual(
             set(data.keys()),
             set(
-                ["id", "name", "description", "date_start", "latitude", "longitude"]
+                ["id", "name", "description", "date_start","date_created", "latitude", "longitude"]
             ),  # , "participants"
         )
         self.assertEqual(data["name"], "Test Event")
