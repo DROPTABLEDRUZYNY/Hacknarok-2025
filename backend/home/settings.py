@@ -35,10 +35,6 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0", "[::1]"]
 
 AUTH_USER_MODEL = "users.User"
 
-SESSION_COOKIE_AGE = 1209600
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-SESSION_SAVE_EVERY_REQUEST = True
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -181,6 +177,9 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -194,6 +193,10 @@ REST_FRAMEWORK = {
 }
 
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
+
+SESSION_COOKIE_AGE = 1209600
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_SAVE_EVERY_REQUEST = True
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "My API",
@@ -222,21 +225,20 @@ LOGGING = {
             "formatter": "verbose",
         },
         "console": {
-            "level": "INFO",
+            "level": "WARNING",
             "class": "logging.StreamHandler",
         },
     },
-    
     "loggers": {
         "django": {
             "handlers": ["file", "console"],
             "level": "INFO",
             "propagate": True,
         },
-        'django.utils.autoreload': { 
-            'handlers': ['file'],
-            'level': 'INFO',
-            'propagate': False,
+        "django.utils.autoreload": {
+            "handlers": ["file"],
+            "level": "INFO",
+            "propagate": False,
         },
         "users": {
             "handlers": ["file", "console"],
