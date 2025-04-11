@@ -54,7 +54,7 @@ export default function ChartBar1({ data, config }: ChartBar1Props) {
             <XAxis dataKey="day" />
             <YAxis />
             <ChartTooltip content={<ChartTooltipContent />} />
-            <Bar dataKey="sales" fill="var(--color-sales)" />
+            <Bar dataKey="sales" fill="var(--foreground)" />
           </BarChart>
         </ChartContainer>
       </CardContent>

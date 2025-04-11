@@ -56,7 +56,7 @@ export default function StatsLineChart({
             <Line
               dataKey="desktop"
               type="natural"
-              stroke="var(--color-desktop)"
+              stroke="var(--foreground)"
               strokeWidth={2}
               dot={false}
             />

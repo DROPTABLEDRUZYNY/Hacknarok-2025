@@ -46,7 +46,7 @@ export default function ChartLine2({ data, config }: ChartLine2Props) {
             <Line
               type="monotone"
               dataKey="price"
-              stroke="var(--color-price)"
+              stroke="var(--foreground)"
               strokeWidth={2}
             />
           </LineChart>

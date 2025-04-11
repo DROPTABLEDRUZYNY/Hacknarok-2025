@@ -4,7 +4,7 @@ import {
   UserGroupIcon,
   HomeIcon,
   DocumentDuplicateIcon,
-  UserIcon
+  UserIcon,
 } from "@heroicons/react/24/outline";
 
 import Link from "next/link";
@@ -38,9 +38,10 @@ export default function NavLinks() {
             key={link.name}
             href={link.href}
             className={clsx(
-              "rounded-xl flex h-[48px] grow items-center justify-center gap-2 bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3",
+              "rounded-xl flex h-[48px] grow items-center transition justify-center gap-2 p-3 text-sm font-medium hover:bg-black/50 hover:text-white md:flex-none md:justify-start md:p-2 md:px-3",
               {
-                "bg-sky-100 text-blue-600": pathname === link.href,
+                "bg-black  text-white": pathname === link.href,
+                "bg-gray-50": pathname !== link.href,
               }
             )}
           >

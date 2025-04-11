@@ -31,6 +31,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <div className="wrapper m-0 p-0 absolute z-[-1]">
+          <div className="gradient gradient-1"></div>
+          <div className="gradient gradient-2"></div>
+          <div className="gradient gradient-3"></div>
+        </div>
         {children}
       </body>
     </html>
