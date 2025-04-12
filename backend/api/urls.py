@@ -7,8 +7,6 @@ from api.views import GetCSRFToken
 from . import views
 
 router = DefaultRouter()
-# router.register(r"products1", views.ProductViewSet, basename="products1")
-# router.register(r"products2", views.ProductItemsViewSet, basename="products2")
 
 router.register(r'projects', views.ProjectViewSet)
 router.register(r'positions', views.WorkPositionViewSet)
