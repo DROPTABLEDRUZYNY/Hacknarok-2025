@@ -14,7 +14,7 @@ from users.models import User
 class UserSimpleSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "email", "first_name", "last_name"]
+        fields = ["id", "email", "first_name", "last_name", "avatar"]
 
 
 class SkillSerializer(serializers.ModelSerializer):
@@ -31,7 +31,7 @@ class SpecializationSerializer(serializers.ModelSerializer):
 
 class WorkPositionSerializer(serializers.ModelSerializer):
     required_skills = SkillSerializer(many=True, read_only=True)
-
+    application_status = serializers.SerializerMethodField()
     
     specialization = serializers.PrimaryKeyRelatedField(
         queryset=Specialization.objects.all(),
@@ -43,7 +43,12 @@ class WorkPositionSerializer(serializers.ModelSerializer):
 
     def get_current_interested(self, obj):
         return obj.applications.count()
-
+    
+    def get_application_status(self, obj):
+        user = self.context['request'].user
+        application = obj.applications.filter(user=user).first()
+        return application.status if application else None
+    
     class Meta:
         model = WorkPosition
         fields = [
@@ -57,6 +62,7 @@ class WorkPositionSerializer(serializers.ModelSerializer):
             "people_required_max",
             "description",
             "current_interested",
+            "application_status"
         ]
 
 
@@ -64,7 +70,7 @@ class WorkPositionCreateSerializer(serializers.ModelSerializer):
     required_skills = serializers.SlugRelatedField(
         many=True, slug_field="name", queryset=Skill.objects.all(), required=False
     )
-
+    
     class Meta:
         model = WorkPosition
         fields = "__all__"
