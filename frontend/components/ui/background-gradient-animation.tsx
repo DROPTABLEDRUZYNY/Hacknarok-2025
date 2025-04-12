@@ -59,7 +59,6 @@ export const BackgroundGradientAnimation = ({
     document.body.style.setProperty("--blending-value", blendingValue);
 
     const handleWindowMouseMove = (event: MouseEvent) => {
-      console.log("mouse move");
       if (interactiveRef.current) {
         const rect = interactiveRef.current.getBoundingClientRect();
         setTgX(event.clientX - rect.left);

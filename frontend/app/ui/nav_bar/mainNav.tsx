@@ -4,7 +4,7 @@ import SomeLogo from "@/app/ui/someLogo";
 import { PowerIcon } from "@heroicons/react/24/outline";
 import LogoutButton from "../LogoutButton";
 import NavButton from "./navButton";
-import { HomeIcon } from "@heroicons/react/24/outline";
+import { HomeIcon, SparklesIcon, BriefcaseIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 
 export default function MainNav() {
@@ -15,9 +15,9 @@ export default function MainNav() {
       </div>
 
       <div className="flex items-center">
-        <NavButton text="projects" icon={<HomeIcon className="w-4 h-4 text-black" />} link="/" />
+        <NavButton text="projects" icon={<SparklesIcon className="w-4 h-4 text-black" />} link="/" />
         <NavButton text="network" icon={<HomeIcon className="w-4 h-4 text-black" />} link="/" />
-        <NavButton text="jobs" icon={<HomeIcon className="w-4 h-4 text-black" />} link="/" />
+        <NavButton text="jobs" icon={<BriefcaseIcon className="w-4 h-4 text-black" />} link="/" />
       </div>
 
       <div className="flex items-start">

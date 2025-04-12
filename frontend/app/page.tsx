@@ -33,7 +33,7 @@ export default function Page() {
               </div>
             </div>
 
-            <ThreeDCardDemo />
+            <ThreeDCardDemo/>
           </div>
         </div>
       </main>
