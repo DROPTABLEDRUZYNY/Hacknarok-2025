@@ -3,7 +3,7 @@ import "@/app/globals.css";
 import { inter } from "@/app/ui/fonts";
 
 import localFont from "next/font/local";
-import MainNav from "@/app/ui/mainNav";
+import MainNav from "@/app/ui/nav_bar/mainNav";
 
 export const metadata: Metadata = {
   title: {
@@ -17,9 +17,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <span lang="en" suppressHydrationWarning>
       <div className="flex h-screen flex-col md:flex-row md:overflow-hidden">
-        <div className="w-full fixed z-[1000]">
-          <MainNav />
-        </div>
         <div className="flex-grow p-6 md:overflow-y-auto md:p-10">
           {children}
         </div>

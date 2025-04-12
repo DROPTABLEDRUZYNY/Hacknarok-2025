@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { inter } from "@/app/ui/fonts";
 import "./globals.css";
+import MainNav from "./ui/nav_bar/mainNav";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,8 +30,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} width-[80%] antialiased`}
       >
+        <MainNav />
         <div className="wrapper m-0 p-0 absolute z-[-1]">
           <div className="gradient gradient-1"></div>
           <div className="gradient gradient-2"></div>
