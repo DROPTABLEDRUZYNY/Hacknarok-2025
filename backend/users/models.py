@@ -37,7 +37,6 @@ class UserManager(BaseUserManager):
 
         return self.create_user(email, password, **extra_fields)
 
-
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField("email address", unique=True)
     first_name = models.CharField(
@@ -49,10 +48,24 @@ class User(AbstractBaseUser, PermissionsMixin):
     phone_number = PhoneField(
         blank=True, null=False, help_text="Numer telefonu w formacie +48 123 456 789"
     )
+    
+    bio = models.TextField(blank=True)
+    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    
+    specialization = models.ManyToManyField('api.Specialization',blank=True, related_name="specialists")
+    skills = models.ManyToManyField('api.Skill', blank=True)
+    #website = models.URLField(blank=True)
+    #location = models.CharField(max_length=200, blank=True)
 
     date_joined = models.DateTimeField("date joined", default=timezone.now)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+
+    # Dynamicznie generowane?
+    # @property
+    # def qr_code_url(self):
+    #     return f"/media/qrcodes/user_{self.id}.png"
+
 
     objects = UserManager()
 

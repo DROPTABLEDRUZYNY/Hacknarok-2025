@@ -28,11 +28,39 @@ from rest_framework.generics import (
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import GenericViewSet, ModelViewSet, ReadOnlyModelViewSet
+from .models import Project, WorkPosition, PositionApplication
+from .serializers import ProjectSerializer, WorkPositionSerializer
+
 
 import logging
 
 logger = logging.getLogger(__name__)
-# User = get_user_model()
+User = get_user_model()
+
+
+class ProjectViewSet(ModelViewSet):
+    queryset = Project.objects.filter(is_active=True)
+    serializer_class = ProjectSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+
+class WorkPositionViewSet(ModelViewSet):
+    queryset = WorkPosition.objects.all()
+    serializer_class = WorkPositionSerializer
+    permission_classes = [IsAuthenticated]
+
+    @action(detail=True, methods=["post"])
+    def apply(self, request, pk=None):
+        position = self.get_object()
+        application, created = PositionApplication.objects.get_or_create(
+            position=position, user=request.user
+        )
+        if not created:
+            return Response({"error": "Already applied"}, status=400)
+        return Response({"status": "Application created"}, status=201)
 
 
 @method_decorator(ensure_csrf_cookie, name="dispatch")
