@@ -2,16 +2,15 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
-from api.views import GetCSRFToken
+from api.views import GetCSRFToken, PositionApplicationViewSet
 
 from . import views
 
 router = DefaultRouter()
-# router.register(r"products1", views.ProductViewSet, basename="products1")
-# router.register(r"products2", views.ProductItemsViewSet, basename="products2")
 
 router.register(r'projects', views.ProjectViewSet)
 router.register(r'positions', views.WorkPositionViewSet)
+router.register(r'applications', PositionApplicationViewSet, basename='application')
 
 urlpatterns = [
     path("", include(router.urls)),

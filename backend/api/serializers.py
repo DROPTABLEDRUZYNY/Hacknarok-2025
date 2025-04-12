@@ -7,14 +7,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 from rest_framework import serializers
-from .models import Project, Specialization, Skill, WorkPosition
+from .models import PositionApplication, Project, Specialization, Skill, WorkPosition
 from users.models import User
 
 
 class UserSimpleSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "email", "first_name", "last_name"]
+        fields = ["id", "email", "first_name", "last_name", "avatar"]
 
 
 class SkillSerializer(serializers.ModelSerializer):
@@ -31,18 +31,25 @@ class SpecializationSerializer(serializers.ModelSerializer):
 
 class WorkPositionSerializer(serializers.ModelSerializer):
     required_skills = SkillSerializer(many=True, read_only=True)
+    application_status = serializers.SerializerMethodField()
 
-    
     specialization = serializers.PrimaryKeyRelatedField(
         queryset=Specialization.objects.all(),
-        write_only=True  # Tylko do zapisu, do odczytu używamy SpecializationSerializer
+        write_only=True,  # Tylko do zapisu, do odczytu używamy SpecializationSerializer
     )
-    specialization_detail = SpecializationSerializer(source='specialization', read_only=True)
-    
+    specialization_detail = SpecializationSerializer(
+        source="specialization", read_only=True
+    )
+
     current_interested = serializers.SerializerMethodField()
 
     def get_current_interested(self, obj):
         return obj.applications.count()
+
+    def get_application_status(self, obj):
+        user = self.context["request"].user
+        application = obj.applications.filter(user=user).first()
+        return application.status if application else None
 
     class Meta:
         model = WorkPosition
@@ -57,6 +64,7 @@ class WorkPositionSerializer(serializers.ModelSerializer):
             "people_required_max",
             "description",
             "current_interested",
+            "application_status",
         ]
 
 
@@ -80,50 +88,38 @@ class WorkPositionCreateSerializer(serializers.ModelSerializer):
 class ProjectSerializer(serializers.ModelSerializer):
     owner = UserSimpleSerializer(read_only=True)
     positions = WorkPositionSerializer(many=True, read_only=True)
+    applications = serializers.SerializerMethodField()
 
     class Meta:
         model = Project
-        fields = "__all__"
-        extra_kwargs = {"positions": {"read_only": True}}
+        fields = [
+            "id",
+            "name",
+            "description",
+            "image",
+            "owner",
+            "created_at",
+            "is_active",
+            "location",
+            "positions",
+            "applications",
+        ]
 
-    def create(self, validated_data):
-        project = super().create(validated_data)
-        return project
+    def get_applications(self, obj):
+        # Pobierz wszystkie aplikacje dla pozycji w tym projekcie
+        applications = PositionApplication.objects.filter(
+            position__project=obj
+        ).select_related("user", "position")
+        return PositionApplicationSerializer(
+            applications, many=True, context=self.context
+        ).data
 
 
-# class ProductSerializer(serializers.ModelSerializer):
-#     def create(self, validated_data):
-#         logger.info(f"Creating new product with data: {validated_data}")
-#         return super().create(validated_data)
+class PositionApplicationSerializer(serializers.ModelSerializer):
+    user = UserSimpleSerializer(read_only=True)
+    position = WorkPositionSerializer(read_only=True)
 
-#     def update(self, instance, validated_data):
-#         logger.info(f"Updating product {instance.id} with data: {validated_data}")
-#         return super().update(instance, validated_data)
-
-#     class Meta:
-#         model = Product
-#         fields = ["id", "name", "price", "description"]
-
-
-# class EventSerializer(serializers.ModelSerializer):
-
-#     class Meta:
-#         model = Event
-#         fields = [
-#             "id",
-#             "name",
-#             "description",
-#             "date_created",
-#             "date_start",
-#             "latitude",
-#             "longitude",
-#             # "participants",
-#         ]
-
-#     def create(self, validated_data):
-#         logger.info(f"Creating new event with data: {validated_data}")
-#         return super().create(validated_data)
-
-#     def update(self, instance, validated_data):
-#         logger.info(f"Updating event {instance.id} with data: {validated_data}")
-#         return super().update(instance, validated_data)
+    class Meta:
+        model = PositionApplication
+        fields = ["id", "user", "position", "applied_at", "status"]
+        read_only_fields = ["id", "applied_at"]

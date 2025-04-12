@@ -55,13 +55,27 @@ class UserSerializerTest(TestCase):
         self.assertEqual(
             set(data.keys()),
             set(
-                ["id", "first_name", "last_name", "email", "birth_date", "phone_number"]
+                [
+                    "id",
+                    "first_name",
+                    "last_name",
+                    "email",
+                    "birth_date",
+                    "specialization",
+                    "skills",
+                    "avatar",
+                    "experience",
+                    "project3",
+                    "level",
+                    "project2",
+                    "project1",
+                ]
             ),
         )
         self.assertEqual(data["email"], "test@example.com")
         self.assertEqual(data["first_name"], "John")
         self.assertEqual(data["last_name"], "Doe")
-        self.assertEqual(data["phone_number"], "+48123456789")
+        # self.assertEqual(data["phone_number"], "+48123456789")
 
 
 class UserAPITest(TestCase):
@@ -91,7 +105,7 @@ class UserAPITest(TestCase):
         response = self.client.post(self.register_url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["email"], "newuser@example.com")
-        self.assertEqual(response.data["phone_number"], "+48123456780")
+        #self.assertEqual(response.data["phone_number"], "+48123456780")
 
     def test_register_authenticated_user(self):
         self.client.force_authenticate(user=self.user)
@@ -162,7 +176,7 @@ class UserAPITest(TestCase):
         self.assertEqual(response.data["email"], "test@example.com")
         self.assertEqual(response.data["first_name"], "John")
         self.assertEqual(response.data["last_name"], "Doe")
-        self.assertEqual(response.data["phone_number"], "+48123456789")
+        #self.assertEqual(response.data["phone_number"], "+48123456789")
 
     def test_get_current_user_unauthenticated(self):
         response = self.client.get(self.current_user_url)

@@ -2,9 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import User
 from django import forms
-from django.contrib import admin
 from django.contrib.auth.models import Group
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
 
@@ -52,57 +50,78 @@ class UserChangeForm(forms.ModelForm):
         fields = ["email", "password", "birth_date", "is_active", "is_staff"]
 
 
-class UserAdmin(BaseUserAdmin):
-    # The forms to add and change user instances
-    form = UserChangeForm
-    add_form = UserCreationForm
-
-    # The fields to be used in displaying the User model.
-    # These override the definitions on the base UserAdmin
-    # that reference specific fields on auth.User.
+@admin.register(User)
+class CustomUserAdmin(UserAdmin):
+    model = User
     list_display = (
+        "id",
         "email",
         "first_name",
         "last_name",
-        "phone_number",
-        "birth_date",
+        "is_active",
         "is_staff",
+        "get_specializations",
+        "get_skills",
     )
-    list_filter = ["is_staff"]
-    # Edit user page
-    fieldsets = [
-        (None, {"fields": ["email", "password"]}),
+    search_fields = ("email", "first_name", "last_name")
+    list_filter = ("is_active", "is_staff", "date_joined")
+    ordering = ("-date_joined",)
+    fieldsets = (
+        (None, {"fields": ("email", "password")}),
         (
-            "Personal info",
-            {"fields": ["first_name", "last_name", "birth_date", "phone_number"]},
+            "Personal Info",
+            {
+                "fields": (
+                    "first_name",
+                    "last_name",
+                    "birth_date",
+                    "phone_number",
+                    "bio",
+                    "avatar",
+                    "specialization",
+                    "skills",
+                )
+            },
         ),
-        ("Permissions", {"fields": ["is_staff"]}),
-    ]
-
-    # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
-    # overrides get_fieldsets to use this attribute when creating a user.
-    add_fieldsets = [
+        (
+            "Permissions",
+            {
+                "fields": (
+                    "is_active",
+                    "is_staff",
+                    "is_superuser",
+                    "groups",
+                    "user_permissions",
+                )
+            },
+        ),
+        ("Important Dates", {"fields": ("last_login", "date_joined")}),
+    )
+    add_fieldsets = (
         (
             None,
             {
-                "classes": ["wide"],
-                "fields": [
-                    "first_name",
-                    "last_name",
+                "classes": ("wide",),
+                "fields": (
                     "email",
-                    "birth_date",
-                    "phone_number",
                     "password1",
                     "password2",
-                ],
+                    "is_active",
+                    "is_staff",
+                    "is_superuser",
+                    "groups",
+                    "user_permissions",
+                ),
             },
         ),
-    ]
-    search_fields = ["email"]
-    ordering = ["email"]
-    filter_horizontal = []
+    )
 
+    def get_specializations(self, obj):
+        return ", ".join([spec.name for spec in obj.specialization.all()])
 
-admin.site.register(User, UserAdmin)
+    get_specializations.short_description = "Specializations"
 
-# admin.site.unregister(Group)
+    def get_skills(self, obj):
+        return ", ".join([skill.name for skill in obj.skills.all()])
+
+    get_skills.short_description = "Skills"
