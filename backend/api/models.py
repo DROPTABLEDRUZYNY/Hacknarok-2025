@@ -21,7 +21,6 @@ class Project(models.Model):
 class Specialization(models.Model):
     """Main specialisation"""
     name = models.CharField(max_length=100)
-    icon = models.CharField(max_length=50, blank=True)
     
     def __str__(self):
         return self.name
