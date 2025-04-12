@@ -77,10 +77,13 @@ class WorkPositionTests(APITestCase):
             "people_required_min": 1,
             "people_required_max": 2,
             "description": "Poszukujemy programisty",
-            "required_skills": [self.skill.id],
+            "required_skills": ["Python"], # Frontend knows all the skill types - it should be a list of strings!!
         }
         response = self.client.post(url, data, format="json")
+        print(response.data)
+        print(response)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        
         self.assertEqual(WorkPosition.objects.count(), 1)
         position = WorkPosition.objects.first()
         self.assertEqual(position.title, "Programista Python")
