@@ -15,7 +15,7 @@ router.register(r'positions', views.WorkPositionViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),
-    path("random/", views.RandomProductView.as_view(), name="random_product"),
+    # path("random/", views.RandomProductView.as_view(), name="random_product"),
     path("users/", include("users.urls")),
     path("csrf/", GetCSRFToken.as_view(), name="get_csrf"),
     

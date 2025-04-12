@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Product, Event
+
+# from .models import Product, Event
 
 import logging
 
@@ -30,7 +31,14 @@ class SpecializationSerializer(serializers.ModelSerializer):
 
 class WorkPositionSerializer(serializers.ModelSerializer):
     required_skills = SkillSerializer(many=True, read_only=True)
-    specialization = SpecializationSerializer(read_only=True)
+
+    
+    specialization = serializers.PrimaryKeyRelatedField(
+        queryset=Specialization.objects.all(),
+        write_only=True  # Tylko do zapisu, do odczytu używamy SpecializationSerializer
+    )
+    specialization_detail = SpecializationSerializer(source='specialization', read_only=True)
+    
     current_interested = serializers.SerializerMethodField()
 
     def get_current_interested(self, obj):
@@ -38,7 +46,18 @@ class WorkPositionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = WorkPosition
-        fields = "__all__"
+        fields = [
+            "id",
+            "project",
+            "title",
+            "specialization",  # Write (with ID)
+            "specialization_detail",  # Read  (full data)
+            "required_skills",
+            "people_required_min",
+            "people_required_max",
+            "description",
+            "current_interested",
+        ]
 
 
 class WorkPositionCreateSerializer(serializers.ModelSerializer):
@@ -72,41 +91,39 @@ class ProjectSerializer(serializers.ModelSerializer):
         return project
 
 
+# class ProductSerializer(serializers.ModelSerializer):
+#     def create(self, validated_data):
+#         logger.info(f"Creating new product with data: {validated_data}")
+#         return super().create(validated_data)
+
+#     def update(self, instance, validated_data):
+#         logger.info(f"Updating product {instance.id} with data: {validated_data}")
+#         return super().update(instance, validated_data)
+
+#     class Meta:
+#         model = Product
+#         fields = ["id", "name", "price", "description"]
 
 
-class ProductSerializer(serializers.ModelSerializer):
-    def create(self, validated_data):
-        logger.info(f"Creating new product with data: {validated_data}")
-        return super().create(validated_data)
+# class EventSerializer(serializers.ModelSerializer):
 
-    def update(self, instance, validated_data):
-        logger.info(f"Updating product {instance.id} with data: {validated_data}")
-        return super().update(instance, validated_data)
+#     class Meta:
+#         model = Event
+#         fields = [
+#             "id",
+#             "name",
+#             "description",
+#             "date_created",
+#             "date_start",
+#             "latitude",
+#             "longitude",
+#             # "participants",
+#         ]
 
-    class Meta:
-        model = Product
-        fields = ["id", "name", "price", "description"]
+#     def create(self, validated_data):
+#         logger.info(f"Creating new event with data: {validated_data}")
+#         return super().create(validated_data)
 
-
-class EventSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Event
-        fields = [
-            "id",
-            "name",
-            "description",
-            "date_created",
-            "date_start",
-            "latitude",
-            "longitude",
-            # "participants",
-        ]
-
-    def create(self, validated_data):
-        logger.info(f"Creating new event with data: {validated_data}")
-        return super().create(validated_data)
-
-    def update(self, instance, validated_data):
-        logger.info(f"Updating event {instance.id} with data: {validated_data}")
-        return super().update(instance, validated_data)
+#     def update(self, instance, validated_data):
+#         logger.info(f"Updating event {instance.id} with data: {validated_data}")
+#         return super().update(instance, validated_data)
