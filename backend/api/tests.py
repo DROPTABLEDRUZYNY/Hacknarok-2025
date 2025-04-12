@@ -80,8 +80,7 @@ class WorkPositionTests(APITestCase):
             "required_skills": ["Python"], # Frontend knows all the skill types - it should be a list of strings!!
         }
         response = self.client.post(url, data, format="json")
-        print(response.data)
-        print(response)
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         
         self.assertEqual(WorkPosition.objects.count(), 1)

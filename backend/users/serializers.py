@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from api.serializers import SpecializationSerializer, SkillSerializer
 
 import logging
 
@@ -9,6 +10,9 @@ User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
+    specialization = SpecializationSerializer(many=True, read_only=True)
+    skills = SkillSerializer(many=True, read_only=True)
+
     class Meta:
         model = User
         fields = [
@@ -16,8 +20,15 @@ class UserSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "email",
+            "avatar",
             "birth_date",
-            "phone_number",
+            "project1",
+            "project2",
+            "project3",
+            "experience",
+            "level",
+            "specialization",  # Serializowane jako lista obiektów z nazwami
+            "skills",  # Serializowane jako lista obiektów z nazwami
         ]
 
     def validate_first_name(self, value):

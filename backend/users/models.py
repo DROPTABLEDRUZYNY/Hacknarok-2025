@@ -49,23 +49,24 @@ class User(AbstractBaseUser, PermissionsMixin):
         blank=True, null=False, help_text="Numer telefonu w formacie +48 123 456 789"
     )
     
-    bio = models.TextField(blank=True)
-    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    bio = models.TextField(blank=True, max_length=200)
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    
+    project1 = models.CharField(max_length=100, blank=True)
+    project2 = models.CharField(max_length=100, blank=True)
+    project3 = models.CharField(max_length=100, blank=True)
+    
+    experience = models.IntegerField(default=0)
+    level = models.IntegerField(default=1)
     
     specialization = models.ManyToManyField('api.Specialization',blank=True, related_name="specialists")
     skills = models.ManyToManyField('api.Skill', blank=True)
     #website = models.URLField(blank=True)
     #location = models.CharField(max_length=200, blank=True)
-
+    
     date_joined = models.DateTimeField("date joined", default=timezone.now)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-
-    # Dynamicznie generowane?
-    # @property
-    # def qr_code_url(self):
-    #     return f"/media/qrcodes/user_{self.id}.png"
-
 
     objects = UserManager()
 
