@@ -43,10 +43,6 @@ class WorkPosition(models.Model):
     people_required_max = models.PositiveIntegerField(default=1)
     description = models.TextField(blank=True)
     
-    @property
-    def current_interested(self):
-        return self.applications.count()  # Zakładając, że aplikacje będą w related_name='applications'
-    
     def __str__(self):
         return f"{self.title} for {self.project.name}"
 
@@ -62,10 +58,6 @@ class PositionApplication(models.Model):
     
     class Meta:
         unique_together = ('position', 'user')
-
-
-
-
 
 
 class Product(models.Model):
