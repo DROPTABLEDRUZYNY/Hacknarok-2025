@@ -3,10 +3,10 @@ import React from 'react'
 
 export default function NavButton({text, icon, link}: {text: string, icon: React.ReactNode, link: string}) {
   return (
-    <div className="flex items-center gap-2 cursor-pointer bg-black rounded-full px-4">
+    <div className="flex items-center gap-2 cursor-pointer bg-opacity-0 hover:bg-white/30 transition-all duration-300 ease-in-out border border-black rounded-full px-4">
         <Link href={link} className="flex items-center gap-2">
             {icon}
-            <span className="text-white font-medium">{text}</span>
+            <span className="text-black font-medium">{text}</span>
         </Link>
     </div>
   )
