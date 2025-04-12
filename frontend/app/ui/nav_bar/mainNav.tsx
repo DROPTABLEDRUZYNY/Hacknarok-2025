@@ -9,7 +9,7 @@ import Image from "next/image";
 
 export default function MainNav() {
   return (
-    <nav className="w-full backdrop-blur fixed top-0 left-0 right-0 z-10 justify-around py-4 flex items-start">
+    <nav className="w-full backdrop-blur fixed top-0 left-0 right-0 z-20 justify-around py-4 flex items-start">
       <div className="width-[80%] border-black border p-1 rounded-md">
         <Image src="/logo.svg" alt="logo" width={160} height={160} />
       </div>
