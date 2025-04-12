@@ -39,6 +39,7 @@ export const BackgroundGradientAnimation = ({
   const [curY, setCurY] = useState(0);
   const [tgX, setTgX] = useState(0);
   const [tgY, setTgY] = useState(0);
+
   useEffect(() => {
     document.body.style.setProperty(
       "--gradient-background-start",
@@ -56,6 +57,26 @@ export const BackgroundGradientAnimation = ({
     document.body.style.setProperty("--pointer-color", pointerColor);
     document.body.style.setProperty("--size", size);
     document.body.style.setProperty("--blending-value", blendingValue);
+
+    const handleWindowMouseMove = (event: MouseEvent) => {
+      console.log("mouse move");
+      if (interactiveRef.current) {
+        const rect = interactiveRef.current.getBoundingClientRect();
+        setTgX(event.clientX - rect.left);
+        setTgY(event.clientY - rect.top);
+      }
+    };
+
+    if (interactive) {
+      window.addEventListener('mousemove', handleWindowMouseMove);
+    }
+
+    return () => {
+      if (interactive) {
+        
+        window.removeEventListener('mousemove', handleWindowMouseMove);
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -70,16 +91,9 @@ export const BackgroundGradientAnimation = ({
       )}px, ${Math.round(curY)}px)`;
     }
 
-    move();
-  }, [tgX, tgY]);
-
-  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (interactiveRef.current) {
-      const rect = interactiveRef.current.getBoundingClientRect();
-      setTgX(event.clientX - rect.left);
-      setTgY(event.clientY - rect.top);
-    }
-  };
+    const animationFrame = requestAnimationFrame(move);
+    return () => cancelAnimationFrame(animationFrame);
+  }, [curX, curY, tgX, tgY]);
 
   const [isSafari, setIsSafari] = useState(false);
   useEffect(() => {
@@ -167,7 +181,6 @@ export const BackgroundGradientAnimation = ({
         {interactive && (
           <div
             ref={interactiveRef}
-            onMouseMove={handleMouseMove}
             className={cn(
               `absolute [background:radial-gradient(circle_at_center,_rgba(var(--pointer-color),_0.8)_0,_rgba(var(--pointer-color),_0)_50%)_no-repeat]`,
               `[mix-blend-mode:var(--blending-value)] w-full h-full -top-1/2 -left-1/2`,
