@@ -29,7 +29,7 @@ from rest_framework.generics import (
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import GenericViewSet, ModelViewSet, ReadOnlyModelViewSet
 from .models import Project, WorkPosition, PositionApplication
-from .serializers import ProjectSerializer, WorkPositionSerializer
+from .serializers import PositionApplicationSerializer, ProjectSerializer, WorkPositionCreateSerializer, WorkPositionSerializer
 
 
 import logging
@@ -49,17 +49,31 @@ class ProjectViewSet(ModelViewSet):
 
 class WorkPositionViewSet(ModelViewSet):
     queryset = WorkPosition.objects.all()
-    serializer_class = WorkPositionSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_serializer_class(self):
+        if self.action in ['create', 'update', 'partial_update']:
+            return WorkPositionCreateSerializer
+        return WorkPositionSerializer
+
     def get_queryset(self):
-        # Filtruj pozycje dla konkretnego projektu jeśli podano project_id
+        queryset = super().get_queryset()
         project_id = self.request.query_params.get('project_id')
         if project_id:
-            return self.queryset.filter(project_id=project_id)
-        return self.queryset
+            queryset = queryset.filter(project_id=project_id)
+        return queryset
 
-    @action(detail=True, methods=["post"])
+    @action(detail=True, methods=['get'])
+    def applications(self, request, pk=None):
+        position = self.get_object()
+        if position.project.owner != request.user:
+            return Response({"error": "You are not the owner of this project"}, status=403)
+        
+        applications = position.applications.all()
+        serializer = PositionApplicationSerializer(applications, many=True)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['post'])
     def apply(self, request, pk=None):
         position = self.get_object()
         application, created = PositionApplication.objects.get_or_create(
@@ -71,11 +85,39 @@ class WorkPositionViewSet(ModelViewSet):
             return Response({"error": "Already applied"}, status=400)
         return Response({"status": "Application created"}, status=201)
 
-
 @method_decorator(ensure_csrf_cookie, name="dispatch")
 class GetCSRFToken(APIView):
     serializer_class = EmptySerializer
 
     def get(self, request):
         return Response({"message": "CSRF cookie set"})
+
+class PositionApplicationViewSet(ModelViewSet):
+    queryset = PositionApplication.objects.all()
+    serializer_class = PositionApplicationSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Filtruj aplikacje dla zalogowanego użytkownika
+        return self.queryset.filter(user=self.request.user)
+
+    @action(detail=True, methods=['post'])
+    def accept(self, request, pk=None):
+        application = self.get_object()
+        if application.position.project.owner != request.user:
+            return Response({"error": "You are not the owner of this project"}, status=403)
+        
+        application.status = 'accepted'
+        application.save()
+        return Response({"status": "Application accepted"})
+
+    @action(detail=True, methods=['post'])
+    def reject(self, request, pk=None):
+        application = self.get_object()
+        if application.position.project.owner != request.user:
+            return Response({"error": "You are not the owner of this project"}, status=403)
+        
+        application.status = 'rejected'
+        application.save()
+        return Response({"status": "Application rejected"})
 

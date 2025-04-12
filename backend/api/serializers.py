@@ -7,7 +7,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from rest_framework import serializers
-from .models import Project, Specialization, Skill, WorkPosition
+from .models import PositionApplication, Project, Specialization, Skill, WorkPosition
 from users.models import User
 
 
@@ -86,12 +86,27 @@ class WorkPositionCreateSerializer(serializers.ModelSerializer):
 class ProjectSerializer(serializers.ModelSerializer):
     owner = UserSimpleSerializer(read_only=True)
     positions = WorkPositionSerializer(many=True, read_only=True)
-
+    applications = serializers.SerializerMethodField()
+    
     class Meta:
         model = Project
-        fields = "__all__"
-        extra_kwargs = {"positions": {"read_only": True}}
+        fields = ['id', 'name', 'description', 'image', 'owner', 
+                 'created_at', 'is_active', 'location', 
+                 'positions', 'applications']
+    
+    def get_applications(self, obj):
+        # Pobierz wszystkie aplikacje dla pozycji w tym projekcie
+        applications = PositionApplication.objects.filter(
+            position__project=obj
+        ).select_related('user', 'position')
+        return PositionApplicationSerializer(applications, many=True, context=self.context).data
 
-    def create(self, validated_data):
-        project = super().create(validated_data)
-        return project
+class PositionApplicationSerializer(serializers.ModelSerializer):
+    user = UserSimpleSerializer(read_only=True)
+    position = WorkPositionSerializer(read_only=True)
+    
+    class Meta:
+        model = PositionApplication
+        fields = ['id', 'user', 'position', 'applied_at', 'status']
+        read_only_fields = ['id', 'applied_at']
+
