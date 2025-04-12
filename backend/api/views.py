@@ -52,11 +52,20 @@ class WorkPositionViewSet(ModelViewSet):
     serializer_class = WorkPositionSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        # Filtruj pozycje dla konkretnego projektu jeśli podano project_id
+        project_id = self.request.query_params.get('project_id')
+        if project_id:
+            return self.queryset.filter(project_id=project_id)
+        return self.queryset
+
     @action(detail=True, methods=["post"])
     def apply(self, request, pk=None):
         position = self.get_object()
         application, created = PositionApplication.objects.get_or_create(
-            position=position, user=request.user
+            position=position, 
+            user=request.user,
+            defaults={'status': 'pending'}
         )
         if not created:
             return Response({"error": "Already applied"}, status=400)
