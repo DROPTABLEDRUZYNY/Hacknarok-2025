@@ -9,6 +9,16 @@ export interface Specialization {
   description: string;
 }
 
+export interface Project {
+  title: string;
+  description: string;
+  technologies: string[];
+  status: 'In Progress' | 'Completed' | 'Planned';
+  startDate: string;
+  teamMembers: string[];
+  specializationIds: number[];
+}
+
 const emojiMap: Record<string, string> = {
   'code-bracket': '💻',
   'heart': '🏥',
