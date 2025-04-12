@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 # from .models import Product, Event
 
 import logging
@@ -30,7 +31,14 @@ class SpecializationSerializer(serializers.ModelSerializer):
 
 class WorkPositionSerializer(serializers.ModelSerializer):
     required_skills = SkillSerializer(many=True, read_only=True)
-    specialization = SpecializationSerializer(read_only=True)
+
+    
+    specialization = serializers.PrimaryKeyRelatedField(
+        queryset=Specialization.objects.all(),
+        write_only=True  # Tylko do zapisu, do odczytu używamy SpecializationSerializer
+    )
+    specialization_detail = SpecializationSerializer(source='specialization', read_only=True)
+    
     current_interested = serializers.SerializerMethodField()
 
     def get_current_interested(self, obj):
@@ -38,7 +46,18 @@ class WorkPositionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = WorkPosition
-        fields = "__all__"
+        fields = [
+            "id",
+            "project",
+            "title",
+            "specialization",  # Write (with ID)
+            "specialization_detail",  # Read  (full data)
+            "required_skills",
+            "people_required_min",
+            "people_required_max",
+            "description",
+            "current_interested",
+        ]
 
 
 class WorkPositionCreateSerializer(serializers.ModelSerializer):
@@ -70,10 +89,6 @@ class ProjectSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         project = super().create(validated_data)
         return project
-
-
-
-
 
 
 # class ProductSerializer(serializers.ModelSerializer):
