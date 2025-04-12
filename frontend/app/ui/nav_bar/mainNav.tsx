@@ -15,9 +15,27 @@ export default function MainNav() {
       </div>
 
       <div className="flex items-center">
-        <NavButton text="projects" icon={<HomeIcon className="w-4 h-4 text-black" />} link="/" />
-        <NavButton text="network" icon={<HomeIcon className="w-4 h-4 text-black" />} link="/" />
-        <NavButton text="jobs" icon={<HomeIcon className="w-4 h-4 text-black" />} link="/" />
+        <Link href="/projects">
+          <NavButton
+            text="projects"
+            icon={<HomeIcon className="w-4 h-4 text-black" />}
+            link="/projects"
+          />
+        </Link>
+        <Link href="/network">
+          <NavButton
+            text="network"
+            icon={<HomeIcon className="w-4 h-4 text-black" />}
+            link="/network"
+          />
+        </Link>
+        <Link href="/jobs">
+          <NavButton
+            text="jobs"
+            icon={<HomeIcon className="w-4 h-4 text-black" />}
+            link="/jobs"
+          />
+        </Link>
       </div>
 
       <div className="flex items-start">
@@ -25,11 +43,8 @@ export default function MainNav() {
           Yehor Kharchenko
         </span>
         <div className="border-black border p-1 rounded-md">
-          <div className="rounded-full bg-black w-10 h-10 ">
-            ,
-          </div>
+          <div className="rounded-full bg-black w-10 h-10 ">,</div>
         </div>
-        
       </div>
     </nav>
   );

@@ -5,13 +5,13 @@ import { useEffect, useRef, useState } from "react";
 export const BackgroundGradientAnimation = ({
   gradientBackgroundStart = "rgb(255, 255, 255)",
   gradientBackgroundEnd = "rgb(255, 255, 255)",
-  firstColor = "18, 113, 255",
-  secondColor = "221, 74, 255",
-  thirdColor = "100, 220, 255",
-  fourthColor = "200, 50, 50",
-  fifthColor = "180, 180, 50",
-  pointerColor = "140, 100, 255",
-  size = "80%",
+  firstColor = "21, 255, 72",
+  secondColor = "21, 255, 72",
+  thirdColor = "21, 255, 72",
+  fourthColor = "21, 255, 72",
+  fifthColor = "21, 255, 72",
+  pointerColor = "21, 255, 72",
+  size = "50%",
   blendingValue = "hard-light",
   children,
   className,
@@ -68,13 +68,12 @@ export const BackgroundGradientAnimation = ({
     };
 
     if (interactive) {
-      window.addEventListener('mousemove', handleWindowMouseMove);
+      window.addEventListener("mousemove", handleWindowMouseMove);
     }
 
     return () => {
       if (interactive) {
-        
-        window.removeEventListener('mousemove', handleWindowMouseMove);
+        window.removeEventListener("mousemove", handleWindowMouseMove);
       }
     };
   }, []);
