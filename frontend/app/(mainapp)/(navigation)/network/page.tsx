@@ -9,14 +9,17 @@ import { Input } from "@/components/ui/input";
 import GraphComponent from "@/app/ui/network/network";
 
 export default function NetworkPage() {
+  // For now, we'll use a hardcoded project ID. In a real app, this would come from the URL or state
+  const projectId = 1;
+
   return (
     <div className="w-full h-full bg-transparent">
       <div className="w-full h-full backdrop-blur">
-        <h1 className=" text-3xl font-bold text-center mb-6 text-black absolute top-20 z-[50] left-1/2 transform -translate-x-1/2">
+        <h1 className="text-3xl font-bold text-center mb-6 text-black absolute top-20 z-[50] left-1/2 transform -translate-x-1/2">
           Network
         </h1>
 
-        <GraphComponent />
+        <GraphComponent projectId={projectId} />
       </div>
     </div>
   );
