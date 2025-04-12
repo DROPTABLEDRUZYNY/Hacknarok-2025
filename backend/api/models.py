@@ -16,7 +16,7 @@ class Project(models.Model):
     location = models.CharField(max_length=200, blank=True)
     
     def __str__(self):
-        return f"{self.name} (by {self.owner.username})"
+        return f"{self.name} (by {self.owner.email})"
 
 class Specialization(models.Model):
     """Main specialisation"""
