@@ -9,17 +9,17 @@ class Project(models.Model):
     description = models.TextField(blank=True)
     image = models.ImageField(upload_to="images/project_images/", null=True, blank=True)
     
-    owner = models.ForeignKey(User, on_delete=models.CASCADE  , related_name='owned_projects')
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='owned_projects')
     created_at = models.DateTimeField(auto_now_add=True)
     
     is_active = models.BooleanField(default=True)
     location = models.CharField(max_length=200, blank=True)
     
-def __str__(self):
-    return f"{self.name} (by {self.owner.username})"
+    def __str__(self):
+        return f"{self.name} (by {self.owner.username})"
 
 class Specialization(models.Model):
-    """Główne specjalizacje (np. Programista, Projektant UX, Elektryk)"""
+    """Main specialisation"""
     name = models.CharField(max_length=100)
     icon = models.CharField(max_length=50, blank=True)
     
@@ -27,16 +27,15 @@ class Specialization(models.Model):
         return self.name
 
 class Skill(models.Model):
-    """Konkretne umiejętności (np. Python, Figma, CAD)"""
     name = models.CharField(max_length=100)
     
     def __str__(self):
         return self.name
 
 class WorkPosition(models.Model):
-    """Stanowisko pracy w projekcie z konkretnymi wymaganiami"""
+    """Needed position in project"""
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='positions')
-    title = models.CharField(max_length=100)  # np. "Frontend Developer" "Coleader" 
+    title = models.CharField(max_length=200)
     specialization = models.ForeignKey(Specialization, on_delete=models.PROTECT)
     required_skills = models.ManyToManyField(Skill, blank=True)
     people_required_min = models.PositiveIntegerField(default=1)
