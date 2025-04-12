@@ -16,7 +16,6 @@ interface Node extends NodeObject {
   id: string;
   name: string;
   type: nodeType;
-  color?: string;
   image?: string;
   // Добавляем кастомное поле для кэширования изображения
   _img?: HTMLImageElement;
@@ -73,7 +72,7 @@ const GraphComponent: React.FC = () => {
 
   useEffect(() => {
     if (fgRef.current) {
-      fgRef.current.d3Force("link")?.distance(50);
+      fgRef.current.d3Force("link")?.distance(200);
     }
   }, []);
 
