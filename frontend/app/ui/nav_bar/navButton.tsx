@@ -11,7 +11,7 @@ export default function NavButton({
   link: string;
 }) {
   return (
-    <div className="flex items-center gap-2 cursor-pointer bg-opacity-0 hover:bg-white/30 transition-all duration-300 ease-in-out border border-black rounded-full px-4">
+    <div className="flex items-center gap-2 cursor-pointer bg-opacity-0 hover:bg-white/30 transition-all duration-300 ease-in-out border border-black rounded-md px-4">
       <div className="flex items-center gap-2">
         {icon}
         <span className="text-black font-medium">{text}</span>
