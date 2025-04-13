@@ -12,7 +12,7 @@ interface ProjectManagementPageProps {
 }
 
 export async function generateMetadata({ params }: ProjectManagementPageProps): Promise<Metadata> {
-  const project = getProject(params.slug);
+  const project = await getProject(params.slug);
   if (!project) {
     return {
       title: 'Project Not Found',
@@ -21,8 +21,8 @@ export async function generateMetadata({ params }: ProjectManagementPageProps): 
   }
 
   return {
-    title: `Manage ${project.title}`,
-    description: `Manage and edit ${project.title}`,
+    title: `Manage ${project.name}`,
+    description: `Manage and edit ${project.name}`,
   };
 }
 
@@ -43,9 +43,11 @@ export default async function ProjectManagementPage({
   }
 
   // Filter specializations based on project's specializationIds
+  // Получаем все специализации из позиции проекта
   const projectSpecializations = specializations.filter((spec) =>
-    project.specializationIds.includes(spec.id)
+    project.positions.some(pos => pos.specialization_detail.id === spec.id)
   );
+
 
   return (
     <ProjectManagementContent

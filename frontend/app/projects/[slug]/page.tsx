@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { getSpecializations } from '@/lib/domains';
-import { Project } from '@/lib/types';
+import { Project, SpecializationDetail } from '@/lib/types';
 import ProjectContent from './ProjectContent';
 import { getProject } from '@/lib/generalService';
 
@@ -12,7 +12,7 @@ interface ProjectPageProps {
 }
 
 export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {
-  const project = getProject(params.slug);
+  const project = await getProject(params.slug); // ждал `await`, иначе получим Promise
   if (!project) {
     return {
       title: 'Project Not Found',
@@ -21,13 +21,13 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
   }
 
   return {
-    title: project.title,
+    title: project.name,
     description: project.description,
   };
 }
 
 async function getProjectData(slug: string): Promise<Project | null> {
-  // Simulate a small delay to mimic API call
+  // Симуляция задержки, как будто это реальный API вызов
   await new Promise(resolve => setTimeout(resolve, 100));
   return getProject(slug);
 }
@@ -40,10 +40,22 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     notFound();
   }
 
-  // Filter specializations based on project's specializationIds
-  const projectSpecializations = specializations.filter(spec => 
-    project.specializationIds.includes(spec.id)
-  );
+  // Извлекаем specialization_detail из позиций проекта
+  const projectSpecializations: SpecializationDetail[] = project.positions
+  .map(pos => pos.specialization_detail)
+  .filter(
+    (value, index, self) =>
+      value && self.findIndex(v => v.id === value.id) === index
+  )
+  .map(spec => ({
+    ...spec,
+    color: 'blue',
+  }));
 
-  return <ProjectContent project={project} specializations={projectSpecializations} />;
-} 
+  return (
+    <ProjectContent
+      project={project}
+      specializations={projectSpecializations}
+    />
+  );
+}
