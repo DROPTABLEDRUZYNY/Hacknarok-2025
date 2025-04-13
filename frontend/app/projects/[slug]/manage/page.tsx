@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 import { getSpecializations } from '@/lib/domains';
 import { Project } from '@/lib/types';
 import ProjectManagementContent from './ProjectManagementContent';
+import { getProject } from '@/lib/generalService';
 
 interface ProjectManagementPageProps {
   params: {
@@ -11,79 +12,24 @@ interface ProjectManagementPageProps {
 }
 
 export async function generateMetadata({ params }: ProjectManagementPageProps): Promise<Metadata> {
+  const project = getProject(params.slug);
+  if (!project) {
+    return {
+      title: 'Project Not Found',
+      description: 'The requested project could not be found',
+    };
+  }
+
   return {
-    title: `Manage Project ${params.slug}`,
-    description: `Manage and edit project ${params.slug}`,
+    title: `Manage ${project.title}`,
+    description: `Manage and edit ${project.title}`,
   };
 }
 
 async function getProjectData(slug: string): Promise<Project | null> {
-  // Mock data for testing - same as in the main project page
-  const mockProjects: Record<string, Project> = {
-    'my-project': {
-      id: '1',
-      title: 'My Awesome Project',
-      description: 'This is a sample project description. It demonstrates how the project page will look with real data.',
-      status: 'recruiting',
-      timeline: [
-        {
-          id: '1',
-          title: 'Project Kickoff',
-          description: 'Initial team meeting and project planning',
-          date: '2024-01-01',
-          type: 'meeting',
-          status: 'completed'
-        },
-        {
-          id: '2',
-          title: 'Design Phase',
-          description: 'Create project design and wireframes',
-          date: '2024-01-15',
-          type: 'milestone',
-          status: 'in_progress'
-        },
-        {
-          id: '3',
-          title: 'Development Start',
-          description: 'Begin implementation of core features',
-          date: '2024-02-01',
-          type: 'task',
-          status: 'upcoming'
-        }
-      ],
-      requiredSkills: ['React', 'TypeScript', 'Next.js'],
-      teamMembers: ['John Doe', 'Jane Smith'],
-      applicants: [],
-      quests: [
-        {
-          id: '1',
-          title: 'Create Project Logo',
-          description: 'Design and create a logo for the project',
-          xpReward: 100,
-          type: 'side',
-          status: 'available',
-          deadline: '2024-01-20'
-        },
-        {
-          id: '2',
-          title: 'Setup Development Environment',
-          description: 'Configure the development environment and tools',
-          xpReward: 50,
-          type: 'main',
-          status: 'in_progress',
-          deadline: '2024-01-10'
-        }
-      ],
-      levelRequirement: 3,
-      xpReward: 500,
-      specializationIds: [1, 7] // Software Developer and Data Analyst
-    }
-  };
-
   // Simulate a small delay to mimic API call
   await new Promise(resolve => setTimeout(resolve, 100));
-
-  return mockProjects[slug] || null;
+  return getProject(slug);
 }
 
 export default async function ProjectManagementPage({ params }: ProjectManagementPageProps) {
