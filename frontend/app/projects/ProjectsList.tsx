@@ -27,30 +27,87 @@ const ProjectsList = ({ projects, specializations }: ProjectsListProps) => {
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [selectedSpecializations, setSelectedSpecializations] = useState<number[]>([]);
   const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false);
+  const [userProfile, setUserProfile] = useState<any>(null);
 
-  const filteredProjects = projects.filter((project) => {
-    const matchesSearch =
-      project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.positions.some((position) =>
-        position.required_skills.some((skill) =>
-          skill.name.toLowerCase().includes(searchQuery.toLowerCase())
-        )
+  useEffect(() => {
+    // Fetch user profile
+    const fetchUserProfile = async () => {
+      try {
+        const response = await fetch('/api/users/me/');
+        if (response.ok) {
+          const data = await response.json();
+          setUserProfile(data);
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
+
+  const calculateProjectMatchScore = (project: Project) => {
+    if (!userProfile) return 0;
+
+    let totalScore = 0;
+    let positionCount = 0;
+
+    project.positions.forEach(position => {
+      positionCount++;
+      
+      // Check spec. match
+      const hasMatchingSpecialization = userProfile.specialization.some(
+        (userSpec: any) => userSpec.id === position.specialization_detail.id
       );
+      
+      if (hasMatchingSpecialization) {
+        totalScore += 2; // 2x val for matching specialization
+      }
 
-    const matchesStatus =
-      selectedStatus === "all" ||
-      (selectedStatus === "recruiting" && project.is_active) ||
-      (selectedStatus === "completed" && !project.is_active); // Уточни как определять статус
+      // Check skills match
+      const userSkills = userProfile.skills.map((skill: any) => skill.id);
+      const matchingSkills = position.required_skills.filter(
+        (skill: any) => userSkills.includes(skill.id)
+      ).length;
+      
+      const skillMatchRatio = matchingSkills / position.required_skills.length;
+      totalScore += skillMatchRatio; //1xval for skills
+    });
 
-    const matchesSpecializations =
-      selectedSpecializations.length === 0 ||
-      project.positions.some((position) =>
-        selectedSpecializations.includes(position.specialization_detail.id)
-      );
+    // avg score for project
+    return positionCount > 0 ? totalScore / positionCount : 0;
+  };
 
-    return matchesSearch && matchesStatus && matchesSpecializations;
-  });
+  const filteredProjects = projects
+    .filter((project) => {
+      const matchesSearch =
+        project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        project.positions.some((position) =>
+          position.required_skills.some((skill) =>
+            skill.name.toLowerCase().includes(searchQuery.toLowerCase())
+          )
+        );
+
+      const matchesStatus =
+        selectedStatus === "all" ||
+        (selectedStatus === "recruiting" && project.is_active) ||
+        (selectedStatus === "completed" && !project.is_active);
+
+      const matchesSpecializations =
+        selectedSpecializations.length === 0 ||
+        project.positions.some((position) =>
+          selectedSpecializations.includes(position.specialization_detail.id)
+        );
+
+      return matchesSearch && matchesStatus && matchesSpecializations;
+    })
+    .sort((a, b) => {
+      // Sort by match score
+      const scoreA = calculateProjectMatchScore(a);
+      const scoreB = calculateProjectMatchScore(b);
+      return scoreB - scoreA;
+    });
 
   const toggleSpecialization = (id: number) => {
     setSelectedSpecializations((prev) =>
