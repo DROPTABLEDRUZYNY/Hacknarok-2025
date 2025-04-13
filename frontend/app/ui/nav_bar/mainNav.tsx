@@ -45,14 +45,18 @@ export default function MainNav() {
         </Link>
       </div>
 
-      <div className="flex items-start">
-        <span className="text-black font-medium border-black border p-1 rounded-md">
-          Yehor Kharchenko
-        </span>
-        <div className="border-black border p-1 rounded-md">
-          <div className="rounded-full bg-black w-10 h-10 ">,</div>
+      <div className="flex items-center gap-2 border-black border p-1 rounded-md">
+        <span className="text-black font-medium">Yehor Kharchenko</span>
+        <div className="w-10 h-10 relative rounded-full overflow-hidden">
+          <Image
+            alt="Avatar"
+            src="/avatar_generic.png"
+            fill
+            className="object-cover"
+          />
         </div>
       </div>
+
     </nav>
   );
 }
