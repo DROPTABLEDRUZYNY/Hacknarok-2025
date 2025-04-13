@@ -32,7 +32,9 @@ async function getProjectData(slug: string): Promise<Project | null> {
   return getProject(slug);
 }
 
-export default async function ProjectManagementPage({ params }: ProjectManagementPageProps) {
+export default async function ProjectManagementPage({
+  params,
+}: ProjectManagementPageProps) {
   const project = await getProjectData(params.slug);
   const specializations = await getSpecializations();
 
@@ -41,9 +43,14 @@ export default async function ProjectManagementPage({ params }: ProjectManagemen
   }
 
   // Filter specializations based on project's specializationIds
-  const projectSpecializations = specializations.filter(spec => 
+  const projectSpecializations = specializations.filter((spec) =>
     project.specializationIds.includes(spec.id)
   );
 
-  return <ProjectManagementContent project={project} specializations={projectSpecializations} />;
-} 
+  return (
+    <ProjectManagementContent
+      project={project}
+      specializations={projectSpecializations}
+    />
+  );
+}

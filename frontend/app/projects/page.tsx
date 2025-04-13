@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: 'Projects',
   description: 'Browse and find projects to join',
 };
+const API_BASE_URL = 'http://localhost:8000/api';
 
 async function getProjects(): Promise<Project[]> {
   // Simulate a small delay to mimic API call
