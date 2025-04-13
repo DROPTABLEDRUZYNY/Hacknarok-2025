@@ -9,9 +9,6 @@ export default function Page() {
   return (
     <div className="grid grid-rows-[20px_1fr_20px] min-h-screen pt-8 px-8">
       <main className="flex flex-col row-start-2">
-        <div className="absolute top-0 left-0 w-full h-full">
-          <BackgroundGradientAnimation />
-        </div>
         <div className="relative z-10">
           <div className="flex justify-between">
             <div className="text-6xl font-extrabold mt-16">

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { inter } from "@/app/ui/fonts";
 import "./globals.css";
 import MainNav from "./ui/nav_bar/mainNav";
+import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,10 +34,8 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} width-[80%] antialiased`}
       >
         <MainNav />
-        <div className="wrapper m-0 p-0 absolute z-[-1]">
-          <div className="gradient gradient-1"></div>
-          <div className="gradient gradient-2"></div>
-          <div className="gradient gradient-3"></div>
+        <div className="w-full h-full fixed top-0 left-0 z-[-1] opacity-[0.75]">
+          <BackgroundGradientAnimation />
         </div>
         {children}
       </body>

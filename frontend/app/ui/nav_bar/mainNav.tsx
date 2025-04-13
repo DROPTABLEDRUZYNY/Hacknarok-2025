@@ -15,9 +15,11 @@ import Image from "next/image";
 export default function MainNav() {
   return (
     <nav className="w-full backdrop-blur fixed top-0 left-0 right-0 z-20 justify-around py-4 flex items-start">
-      <div className=" border-black border p-1 rounded-md">
-        <img src="/logo.svg" alt="logo" className="w-[160px]" />
-      </div>
+      <Link href={"/"}>
+        <div className=" border-black border p-1 rounded-md">
+          <img src="/logo.svg" alt="logo" className="w-[160px]" />
+        </div>
+      </Link>
 
       <div className="flex items-center">
         <Link href="/projects">
@@ -34,7 +36,7 @@ export default function MainNav() {
             link="/network"
           />
         </Link>
-        <Link href="/jobs">
+        <Link href="/profile">
           <NavButton
             text="profile"
             icon={<IdentificationIcon className="w-4 h-4 text-black" />}
