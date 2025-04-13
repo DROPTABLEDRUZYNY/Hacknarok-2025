@@ -18,7 +18,6 @@ interface ApplyProjectPopupProps {
   isOpen: boolean;
   onClose: () => void;
   projectTitle: string;
-  levelRequirement: number;
   userLevel: number;
   onSubmit: (message: string) => void;
 }
@@ -27,7 +26,6 @@ export default function ApplyProjectPopup({
   isOpen,
   onClose,
   projectTitle,
-  levelRequirement,
   userLevel,
   onSubmit,
 }: ApplyProjectPopupProps) {
@@ -40,7 +38,6 @@ export default function ApplyProjectPopup({
     onClose();
   };
 
-  const canApply = userLevel >= levelRequirement;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -48,14 +45,10 @@ export default function ApplyProjectPopup({
         <DialogHeader>
           <DialogTitle>Apply to {projectTitle}</DialogTitle>
           <DialogDescription>
-            {!canApply 
-              ? `You need to be at least level ${levelRequirement} to apply for this project. Your current level is ${userLevel}.`
-              : "Tell us why you want to join this project and what you can bring to the team."}
           </DialogDescription>
         </DialogHeader>
 
-        {canApply ? (
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="message">Application Message</Label>
               <Textarea
@@ -71,7 +64,6 @@ export default function ApplyProjectPopup({
             <div className="bg-muted p-4 rounded-lg space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Minimum Level</span>
-                <span className="font-medium">{levelRequirement}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Your Level</span>
@@ -89,13 +81,6 @@ export default function ApplyProjectPopup({
               <Button type="submit">Submit Application</Button>
             </DialogFooter>
           </form>
-        ) : (
-          <DialogFooter>
-            <Button variant="outline" onClick={onClose}>
-              Close
-            </Button>
-          </DialogFooter>
-        )}
       </DialogContent>
     </Dialog>
   );
