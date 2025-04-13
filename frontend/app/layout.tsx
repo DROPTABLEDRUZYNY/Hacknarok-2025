@@ -16,10 +16,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | LiveActive",
-    default: "LiveActive",
+    template: "%s | LinkHub",
+    default: "LinkHub",
   },
-  description: "Example site called LiveActive",
+  description: "LinkHub - Turn ideas into teams. Instantly.",
 };
 
 export default function RootLayout({
