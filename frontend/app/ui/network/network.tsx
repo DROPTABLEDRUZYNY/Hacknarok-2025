@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
 import React, { useEffect, useRef, useState } from "react";
 import { getGraphData } from "@/services/graphService";
-import type { ForceGraphMethods } from "react-force-graph-2d";
+import ForceGraph2D, { ForceGraphMethods } from "react-force-graph-2d";
 
 enum nodeType {
   PROJECT = "project",
@@ -33,11 +33,6 @@ interface GraphData {
   links: GraphLink[];
 }
 
-const ForceGraph2D = dynamic(
-  () => import("react-force-graph-2d").then((mod) => mod.default),
-  { ssr: false }
-);
-
 const GraphComponent: React.FC<{ projectId: number }> = ({ projectId }) => {
   const fgRef = useRef<any>(undefined);
   const [graphData, setGraphData] = useState<GraphData>({
@@ -62,9 +57,15 @@ const GraphComponent: React.FC<{ projectId: number }> = ({ projectId }) => {
   }, [projectId]);
 
   useEffect(() => {
-    if (fgRef.current) {
-      fgRef.current.d3Force("link")?.distance(250);
-    }
+    const interval = setInterval(() => {
+      if (fgRef.current) {
+        fgRef.current.d3Force("link")?.distance(150);
+        fgRef.current.d3ReheatSimulation(); // важно, чтобы изменения вступили в силу
+        clearInterval(interval); // остановим таймер
+      }
+    }, 100); // пробуем каждые 100мс
+
+    return () => clearInterval(interval);
   }, []);
 
   if (loading) {
@@ -88,7 +89,7 @@ const GraphComponent: React.FC<{ projectId: number }> = ({ projectId }) => {
         onNodeDragEnd={(node: any) =>
           console.log("Node dragged:", node as GraphNode)
         }
-        nodeColor={(node: any) => (node as GraphNode).color || "black"}
+        nodeColor={"black"}
         nodeCanvasObject={(
           node: any,
           ctx: CanvasRenderingContext2D,
@@ -159,7 +160,7 @@ const GraphComponent: React.FC<{ projectId: number }> = ({ projectId }) => {
             } else {
               ctx.beginPath();
               ctx.arc(graphNode.x, graphNode.y, half, 0, 2 * Math.PI);
-              ctx.fillStyle = "gray";
+              ctx.fillStyle = "blakc";
               ctx.fill();
             }
 

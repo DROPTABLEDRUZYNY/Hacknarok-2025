@@ -53,7 +53,7 @@ interface Project {
 interface Node {
   id: string;
   name: string;
-  type: 'project' | 'user' | 'specialization';
+  type: "project" | "user" | "specialization";
   image?: string;
   color?: string;
 }
@@ -68,24 +68,24 @@ interface GraphData {
   links: Link[];
 }
 
-const API_BASE_URL = 'http://localhost:8000/api';
+const API_BASE_URL = "http://localhost:8000/api";
 
 export async function fetchProjectData(projectId: number): Promise<Project> {
   const response = await fetch(`${API_BASE_URL}/projects/${projectId}/`, {
-    credentials: 'include'
+    credentials: "include",
   });
   if (!response.ok) {
-    throw new Error('Failed to fetch project data');
+    throw new Error("Failed to fetch project data");
   }
   return response.json();
 }
 
 export async function fetchAllPositions(): Promise<Position[]> {
   const response = await fetch(`${API_BASE_URL}/positions/`, {
-    credentials: 'include'
+    credentials: "include",
   });
   if (!response.ok) {
-    throw new Error('Failed to fetch positions');
+    throw new Error("Failed to fetch positions");
   }
   return response.json();
 }
@@ -99,9 +99,9 @@ export function transformProjectToGraphData(project: Project): GraphData {
   nodes.push({
     id: projectNodeId,
     name: project.name,
-    type: 'project',
+    type: "project",
     image: project.image,
-    color: '#4F46E5' // Indigo color for projects
+    color: "#4F46E5", // Indigo color for projects
   });
 
   // Add owner node and link
@@ -109,55 +109,55 @@ export function transformProjectToGraphData(project: Project): GraphData {
   nodes.push({
     id: ownerNodeId,
     name: `${project.owner.first_name} ${project.owner.last_name}`,
-    type: 'user',
+    type: "user",
     image: project.owner.avatar || undefined,
-    color: '#10B981' // Green color for users
+    color: "#10B981", // Green color for users
   });
   links.push({
     source: ownerNodeId,
-    target: projectNodeId
+    target: projectNodeId,
   });
 
   // Add specialization nodes and links
-  project.positions.forEach(position => {
+  project.positions.forEach((position) => {
     const specializationNodeId = `specialization-${position.specialization_detail.id}`;
-    
+
     // Add specialization node if not already added
-    if (!nodes.some(node => node.id === specializationNodeId)) {
+    if (!nodes.some((node) => node.id === specializationNodeId)) {
       nodes.push({
         id: specializationNodeId,
         name: position.specialization_detail.name,
-        type: 'specialization',
-        color: '#F59E0B' // Amber color for specializations
+        type: "specialization",
+        color: "#F59E0B", // Amber color for specializations
       });
     }
 
     // Link project to specialization
     links.push({
       source: projectNodeId,
-      target: specializationNodeId
+      target: specializationNodeId,
     });
 
     // Add users who applied for positions
-    project.applications.forEach(application => {
+    project.applications.forEach((application) => {
       if (application.position.id === position.id) {
         const userNodeId = `user-${application.user.id}`;
-        
+
         // Add user node if not already added
-        if (!nodes.some(node => node.id === userNodeId)) {
+        if (!nodes.some((node) => node.id === userNodeId)) {
           nodes.push({
             id: userNodeId,
             name: `${application.user.first_name} ${application.user.last_name}`,
-            type: 'user',
+            type: "user",
             image: application.user.avatar || undefined,
-            color: '#10B981'
+            color: "#10B981",
           });
         }
 
         // Link user to specialization
         links.push({
           source: userNodeId,
-          target: specializationNodeId
+          target: specializationNodeId,
         });
       }
     });
@@ -169,4 +169,4 @@ export function transformProjectToGraphData(project: Project): GraphData {
 export async function getGraphData(projectId: number): Promise<GraphData> {
   const project = await fetchProjectData(projectId);
   return transformProjectToGraphData(project);
-} 
+}
