@@ -11,10 +11,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, Filter, Plus } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import CreateProjectPopup from "@/app/ui/CreateProjectPopup";
 
 interface ProjectsListProps {
   projects: Project[];
@@ -24,9 +25,8 @@ interface ProjectsListProps {
 const ProjectsList = ({ projects, specializations }: ProjectsListProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
-  const [selectedSpecializations, setSelectedSpecializations] = useState<
-    number[]
-  >([]);
+  const [selectedSpecializations, setSelectedSpecializations] = useState<number[]>([]);
+  const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false);
 
   const filteredProjects = projects.filter((project) => {
     const matchesSearch =
@@ -58,12 +58,13 @@ const ProjectsList = ({ projects, specializations }: ProjectsListProps) => {
     <div className="container mx-auto px-4 py-8 mt-20">
       <div className="flex justify-between items-start mb-8">
         <h1 className="text-4xl font-bold">Projects</h1>
-        <Link href="/projects/new">
-          <Button className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            Create Project
-          </Button>
-        </Link>
+        <Button 
+          className="flex items-center gap-2"
+          onClick={() => setIsCreateProjectOpen(true)}
+        >
+          <Plus className="h-4 w-4" />
+          Create Project
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -241,6 +242,11 @@ const ProjectsList = ({ projects, specializations }: ProjectsListProps) => {
           )}
         </div>
       </div>
+
+      <CreateProjectPopup 
+        isOpen={isCreateProjectOpen}
+        onClose={() => setIsCreateProjectOpen(false)}
+      />
     </div>
   );
 };
