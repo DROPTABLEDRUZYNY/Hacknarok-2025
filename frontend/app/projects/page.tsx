@@ -7,8 +7,15 @@ export const metadata: Metadata = {
   title: 'Projects',
   description: 'Browse and find projects to join',
 };
+const API_BASE_URL = 'http://localhost:8000/api';
 
 async function getProjects(): Promise<Project[]> {
+  const response = await fetch(`${API_BASE_URL}/projects/`, {
+    credentials: 'include',
+}
+  );
+  console.log(response.ok, response.status, response.statusText);
+  
   // Mock data for testing
   const mockProjects: Project[] = [
     {
