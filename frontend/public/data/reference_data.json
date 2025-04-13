@@ -1,31 +1,75 @@
 {
   "SPECIALIZATIONS": [
-    { "id": 1, "name": "Software Developer", "icon": "code-bracket" },
-    { "id": 2, "name": "Medical Doctor", "icon": "heart" },
-    { "id": 3, "name": "Biomedical Engineer", "icon": "beaker" },
-    { "id": 4, "name": "Biologist", "icon": "bug" },
-    { "id": 5, "name": "Materials Scientist", "icon": "cube-transparent" },
-    { "id": 6, "name": "Chemist", "icon": "sparkles" },
-    { "id": 7, "name": "Data Analyst", "icon": "chart-bar" },
-    { "id": 8, "name": "Marketer", "icon": "megaphone" },
-    { "id": 9, "name": "QA Tester", "icon": "magnifying-glass" }
+    {
+      "id": 1,
+      "name": "Software Developer",
+      "icon": "code-bracket",
+      "image": "./specializations/software_developer.png"
+    },
+    {
+      "id": 2,
+      "name": "Medical Doctor",
+      "icon": "heart",
+      "image": "./specializations/software_developer.png"
+    },
+    {
+      "id": 3,
+      "name": "Biomedical Engineer",
+      "icon": "beaker",
+      "image": "./specializations/software_developer.png"
+    },
+    {
+      "id": 4,
+      "name": "Biologist",
+      "icon": "bug",
+      "image": "./specializations/software_developer.png"
+    },
+    {
+      "id": 5,
+      "name": "Materials Scientist",
+      "icon": "cube-transparent",
+      "image": "./specializations/software_developer.png"
+    },
+    {
+      "id": 6,
+      "name": "Chemist",
+      "icon": "sparkles",
+      "image": "./specializations/software_developer.png"
+    },
+    {
+      "id": 7,
+      "name": "Data Analyst",
+      "icon": "chart-bar",
+      "image": "./specializations/software_developer.png"
+    },
+    {
+      "id": 8,
+      "name": "Marketer",
+      "icon": "megaphone",
+      "image": "./specializations/software_developer.png"
+    },
+    {
+      "id": 9,
+      "name": "QA Tester",
+      "icon": "magnifying-glass",
+      "image": "./specializations/software_developer.png"
+    }
   ],
-"SKILLS": [
-  { "id": 1, "name": "Embedded Systems" },
-  { "id": 2, "name": "React" },
-  { "id": 3, "name": "C++" },
-  { "id": 4, "name": "Rehabilitation Medicine" },
-  { "id": 5, "name": "Testing Automation" },
-  { "id": 6, "name": "Statistics" },
-  { "id": 7, "name": "Data Visualization" },
-  { "id": 8, "name": "Machine Learning" },
-  { "id": 9, "name": "Python" },
-  { "id": 10, "name": "Medical Imaging" },
-  { "id": 11, "name": "3D Printing" },
-  { "id": 12, "name": "Lab Safety" },
-  { "id": 13, "name": "SEO" },
-  { "id": 14, "name": "Social Media Marketing" },
-  { "id": 15, "name": "Public Speaking" }
-]
-
+  "SKILLS": [
+    { "id": 1, "name": "Embedded Systems" },
+    { "id": 2, "name": "React" },
+    { "id": 3, "name": "C++" },
+    { "id": 4, "name": "Rehabilitation Medicine" },
+    { "id": 5, "name": "Testing Automation" },
+    { "id": 6, "name": "Statistics" },
+    { "id": 7, "name": "Data Visualization" },
+    { "id": 8, "name": "Machine Learning" },
+    { "id": 9, "name": "Python" },
+    { "id": 10, "name": "Medical Imaging" },
+    { "id": 11, "name": "3D Printing" },
+    { "id": 12, "name": "Lab Safety" },
+    { "id": 13, "name": "SEO" },
+    { "id": 14, "name": "Social Media Marketing" },
+    { "id": 15, "name": "Public Speaking" }
+  ]
 }
