@@ -1,53 +1,53 @@
-export interface User {
-  id: string;
+export interface Skill {
+  id: number;
   name: string;
-  level: number;
-  xp: number;
-  completedQuests: string[];
-  skills: string[];
-  avatar?: string;
 }
 
-export interface Quest {
-  id: string;
-  title: string;
-  description: string;
-  xpReward: number;
-  type: 'main' | 'side';
-  status: 'available' | 'help_needed' | 'in_progress' | 'completed';
-  deadline?: string;
-  projectId?: string;
+export interface SpecializationDetail {
+  id: number;
+  name: string;
 }
 
-export interface Project {
-  id: string;
-  title: string;
-  description: string;
-  status: 'recruiting' | 'in_progress' | 'completed';
-  timeline: TimelineEvent[];
-  requiredSkills: string[];
-  teamMembers: string[];
-  applicants: string[];
-  quests: Quest[];
-  levelRequirement: number;
-  xpReward: number;
-  specializationIds: number[];
+export interface User {
+  id: number;
+  email: string;
+  first_name: string;
+  last_name: string;
+  avatar: string;
 }
 
-export interface TimelineEvent {
-  id: string;
+export interface Position {
+  id: number;
+  project: number;
   title: string;
+  specialization_detail: SpecializationDetail;
+  required_skills: Skill[];
+  people_required_min: number;
+  people_required_max: number;
   description: string;
-  date: string;
-  type: 'milestone' | 'task' | 'meeting';
-  status: 'upcoming' | 'in_progress' | 'completed';
+  current_interested: number;
+  application_status: string;
 }
 
 export interface Application {
-  id: string;
-  userId: string;
-  projectId: string;
-  message: string;
-  status: 'pending' | 'accepted' | 'rejected';
-  appliedAt: string;
-} 
+  id: number;
+  user: User;
+  position: Position;
+  applied_at: string;
+  status: string;
+}
+
+export interface Owner extends User {}
+
+export interface Project {
+  id: number;
+  name: string;
+  description: string;
+  image: string | null;
+  owner: Owner;
+  created_at: string;
+  is_active: boolean;
+  location: string;
+  positions: Position[];
+  applications: Application[];
+}

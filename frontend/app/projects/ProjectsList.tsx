@@ -11,10 +11,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, Filter, Plus } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import CreateProjectPopup from "@/app/ui/CreateProjectPopup";
 
 interface ProjectsListProps {
   projects: Project[];
@@ -24,25 +25,28 @@ interface ProjectsListProps {
 const ProjectsList = ({ projects, specializations }: ProjectsListProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
-  const [selectedSpecializations, setSelectedSpecializations] = useState<
-    number[]
-  >([]);
+  const [selectedSpecializations, setSelectedSpecializations] = useState<number[]>([]);
+  const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false);
 
   const filteredProjects = projects.filter((project) => {
     const matchesSearch =
-      project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.requiredSkills.some((skill) =>
-        skill.toLowerCase().includes(searchQuery.toLowerCase())
+      project.positions.some((position) =>
+        position.required_skills.some((skill) =>
+          skill.name.toLowerCase().includes(searchQuery.toLowerCase())
+        )
       );
 
     const matchesStatus =
-      selectedStatus === "all" || project.status === selectedStatus;
+      selectedStatus === "all" ||
+      (selectedStatus === "recruiting" && project.is_active) ||
+      (selectedStatus === "completed" && !project.is_active); // Уточни как определять статус
 
     const matchesSpecializations =
       selectedSpecializations.length === 0 ||
-      selectedSpecializations.some((id) =>
-        project.specializationIds.includes(id)
+      project.positions.some((position) =>
+        selectedSpecializations.includes(position.specialization_detail.id)
       );
 
     return matchesSearch && matchesStatus && matchesSpecializations;
@@ -58,12 +62,13 @@ const ProjectsList = ({ projects, specializations }: ProjectsListProps) => {
     <div className="container mx-auto px-4 py-8 mt-20">
       <div className="flex justify-between items-start mb-8">
         <h1 className="text-4xl font-bold">Projects</h1>
-        <Link href="/projects/new">
-          <Button className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            Create Project
-          </Button>
-        </Link>
+        <Button 
+          className="flex items-center gap-2"
+          onClick={() => setIsCreateProjectOpen(true)}
+        >
+          <Plus className="h-4 w-4" />
+          Create Project
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -101,7 +106,6 @@ const ProjectsList = ({ projects, specializations }: ProjectsListProps) => {
                   <SelectContent>
                     <SelectItem value="all">All Statuses</SelectItem>
                     <SelectItem value="recruiting">Recruiting</SelectItem>
-                    <SelectItem value="in_progress">In Progress</SelectItem>
                     <SelectItem value="completed">Completed</SelectItem>
                   </SelectContent>
                 </Select>
@@ -143,32 +147,23 @@ const ProjectsList = ({ projects, specializations }: ProjectsListProps) => {
             </div>
           ) : (
             filteredProjects.map((project) => (
-              <div
-                key={project.id}
-                className="bg-white rounded-lg shadow-md p-6"
-              >
+              <div key={project.id} className="bg-white rounded-lg shadow-md p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h2 className="text-2xl font-semibold">{project.title}</h2>
+                    <h2 className="text-2xl font-semibold">{project.name}</h2>
                     <div className="flex items-center gap-4 mt-2">
                       <div
                         className={cn(
                           "px-2 py-1 rounded-full text-sm font-medium",
-                          project.status === "recruiting" &&
-                            "bg-green-100 text-green-800",
-                          project.status === "in_progress" &&
-                            "bg-blue-100 text-blue-800",
-                          project.status === "completed" &&
-                            "bg-gray-100 text-gray-800"
+                          project.is_active
+                            ? "bg-green-100 text-green-800"
+                            : "bg-gray-100 text-gray-800"
                         )}
                       >
-                        {project.status.replace("_", " ")}
+                        {project.is_active ? "Recruiting" : "Completed"}
                       </div>
                       <div className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-sm font-medium">
-                        Level {project.levelRequirement}+ Required
-                      </div>
-                      <div className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm font-medium">
-                        +{project.xpReward} XP Reward
+                        {project.location}
                       </div>
                     </div>
                   </div>
@@ -182,18 +177,23 @@ const ProjectsList = ({ projects, specializations }: ProjectsListProps) => {
                 <div className="space-y-4">
                   <div>
                     <h3 className="text-sm font-medium text-gray-700 mb-2">
-                      Required Skills
+                      Positions & Skills
                     </h3>
-                    <div className="flex flex-wrap gap-2">
-                      {project.requiredSkills.map((skill, index) => (
-                        <span
-                          key={index}
-                          className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
+                    {project.positions.map((position) => (
+                      <div key={position.id} className="mb-2">
+                        <p className="font-medium">{position.title}</p>
+                        <div className="flex flex-wrap gap-2 mt-1">
+                          {position.required_skills.map((skill) => (
+                            <span
+                              key={skill.id}
+                              className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
+                            >
+                              {skill.name}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
                   </div>
 
                   <div>
@@ -201,12 +201,14 @@ const ProjectsList = ({ projects, specializations }: ProjectsListProps) => {
                       Specializations
                     </h3>
                     <div className="flex flex-wrap gap-2">
-                      {project.specializationIds.map((id) => {
-                        const spec = specializations.find((s) => s.id === id);
+                      {project.positions.map((position) => {
+                        const spec = specializations.find(
+                          (s) => s.id === position.specialization_detail.id
+                        );
                         if (!spec) return null;
                         return (
                           <span
-                            key={id}
+                            key={position.id}
                             className={cn(
                               spec.color,
                               "px-3 py-1 rounded-full text-sm flex items-center gap-1"
@@ -222,15 +224,15 @@ const ProjectsList = ({ projects, specializations }: ProjectsListProps) => {
 
                   <div>
                     <h3 className="text-sm font-medium text-gray-700 mb-2">
-                      Team Members
+                      Applicants
                     </h3>
                     <div className="flex flex-wrap gap-2">
-                      {project.teamMembers.map((member, index) => (
+                      {project.applications.map((app) => (
                         <span
-                          key={index}
+                          key={app.id}
                           className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm"
                         >
-                          {member}
+                          {app.user.first_name} {app.user.last_name}
                         </span>
                       ))}
                     </div>
@@ -241,6 +243,11 @@ const ProjectsList = ({ projects, specializations }: ProjectsListProps) => {
           )}
         </div>
       </div>
+
+      <CreateProjectPopup 
+        isOpen={isCreateProjectOpen}
+        onClose={() => setIsCreateProjectOpen(false)}
+      />
     </div>
   );
 };
