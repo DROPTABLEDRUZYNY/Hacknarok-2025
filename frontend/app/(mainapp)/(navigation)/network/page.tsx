@@ -14,10 +14,7 @@ export default function NetworkPage() {
   const projectId = 5;
 
   return (
-    <div className="w-full h-full bg-white/25">
-      <div className="w-full h-full absolute top-0 left-0 z-[-1]">
-        <BackgroundGradientAnimation />
-      </div>
+    <div className="w-full h-full">
       <div className="w-full h-full backdrop-blur">
         <h1 className="text-3xl font-bold text-center mb-6 text-black absolute top-20 z-[50] left-1/2 transform -translate-x-1/2">
           Network
