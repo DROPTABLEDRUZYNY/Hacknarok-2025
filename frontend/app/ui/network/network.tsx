@@ -59,7 +59,9 @@ const GraphComponent: React.FC<{ projectId: number }> = ({ projectId }) => {
   useEffect(() => {
     const interval = setInterval(() => {
       if (fgRef.current) {
-        fgRef.current.d3Force("link")?.distance(150);
+        fgRef.current.d3Force("link")?.distance(100);
+        // fgRef.current.d3Force("collide")?.radius(50);
+        fgRef.current.d3Force("charge")?.strength(-1000);
         fgRef.current.d3ReheatSimulation(); // важно, чтобы изменения вступили в силу
         clearInterval(interval); // остановим таймер
       }
@@ -83,6 +85,12 @@ const GraphComponent: React.FC<{ projectId: number }> = ({ projectId }) => {
         graphData={graphData}
         enableNodeDrag={true}
         nodeRelSize={10}
+        linkColor={"black"}
+        linkWidth={2}
+        linkDirectionalParticles={4}
+        linkDirectionalParticleWidth={2}
+        linkDirectionalParticleColor={"black"}
+        linkDirectionalArrowColor={"black"}
         linkDirectionalArrowLength={0}
         linkDirectionalArrowRelPos={1}
         enableZoomInteraction={false}

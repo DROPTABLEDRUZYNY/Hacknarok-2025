@@ -11,10 +11,10 @@ import { BackgroundGradientAnimation } from "@/components/ui/background-gradient
 
 export default function NetworkPage() {
   // For now, we'll use a hardcoded project ID. In a real app, this would come from the URL or state
-  const projectId = 1;
+  const projectId = 5;
 
   return (
-    <div className="w-full h-full bg-transparent">
+    <div className="w-full h-full bg-white/25">
       <div className="w-full h-full absolute top-0 left-0 z-[-1]">
         <BackgroundGradientAnimation />
       </div>

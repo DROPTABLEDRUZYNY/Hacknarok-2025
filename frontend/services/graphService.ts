@@ -118,6 +118,35 @@ export function transformProjectToGraphData(project: Project): GraphData {
     target: projectNodeId,
   });
 
+  let imagesForSpecializations = new Map<string, string>();
+  imagesForSpecializations.set(
+    "Software Developer",
+    "./specializations/software_developer.png"
+  );
+  imagesForSpecializations.set(
+    "Data Analyst",
+    "./specializations/data_analyst.png"
+  );
+  imagesForSpecializations.set("Marketer", "./specializations/marketer.png");
+  imagesForSpecializations.set("Chemist", "./specializations/chemist.png");
+  imagesForSpecializations.set("Biologist", "./specializations/biologist.png");
+  imagesForSpecializations.set(
+    "Biomedical Engineer",
+    "./specializations/software_developer.png"
+  );
+  imagesForSpecializations.set(
+    "Mechanical Engineer",
+    "./specializations/biomedical_engineer.png"
+  );
+  imagesForSpecializations.set("QA Tester", "./specializations/qa_tester.png");
+  imagesForSpecializations.set(
+    "Medical Doctor",
+    "./specializations/medical_doctor.png"
+  );
+  imagesForSpecializations.set(
+    "Materials Scientist",
+    "./specializations/material_scientist.png"
+  );
   // Add specialization nodes and links
   project.positions.forEach((position) => {
     const specializationNodeId = `specialization-${position.specialization_detail.id}`;
@@ -128,6 +157,9 @@ export function transformProjectToGraphData(project: Project): GraphData {
         id: specializationNodeId,
         name: position.specialization_detail.name,
         type: "specialization",
+        image: imagesForSpecializations.get(
+          position.specialization_detail.name
+        ),
         color: "#F59E0B", // Amber color for specializations
       });
     }
