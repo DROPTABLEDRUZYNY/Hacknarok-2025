@@ -8,18 +8,16 @@ from . import views
 
 router = DefaultRouter()
 
-router.register(r'projects', views.ProjectViewSet)
-router.register(r'positions', views.WorkPositionViewSet)
-router.register(r'applications', PositionApplicationViewSet, basename='application')
+router.register(r"projects", views.ProjectViewSet)
+router.register(r"positions", views.WorkPositionViewSet)
+router.register(r"applications", PositionApplicationViewSet, basename="application")
 
 urlpatterns = [
     path("", include(router.urls)),
     # path("random/", views.RandomProductView.as_view(), name="random_product"),
     path("users/", include("users.urls")),
     path("csrf/", GetCSRFToken.as_view(), name="get_csrf"),
-    
-    path('schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-    
-    path("api-auth/", include("rest_framework.urls")),  # auth ONLY for browsable API 
+    path("schema/", SpectacularAPIView.as_view(), name="schema"),
+    path("docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
+    path("api-auth/", include("rest_framework.urls")),  # auth ONLY for browsable API
 ]
