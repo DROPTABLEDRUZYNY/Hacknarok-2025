@@ -1,26 +1,59 @@
 "use client";
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
-import { login } from "@/services/authService";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useState, useEffect } from "react";
 import GraphComponent from "@/app/ui/network/network";
-import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
+import ProjectSelector from "@/app/ui/network/ProjectSelector";
+import { projectService } from "@/services/projectService";
+import { Project } from "@/lib/types";
 
 export default function NetworkPage() {
-  // For now, we'll use a hardcoded project ID. In a real app, this would come from the URL or state
-  const projectId = 5;
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [selectedProjectId, setSelectedProjectId] = useState<number>(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const fetchedProjects = await projectService.getAllProjects();
+        setProjects(fetchedProjects as any);
+        if (fetchedProjects.length > 0) {
+          setSelectedProjectId(fetchedProjects[0].id);
+        }
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        Loading...
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-full">
       <div className="w-full h-full backdrop-blur">
-        <h1 className="text-3xl font-bold text-center mb-6 text-black absolute top-20 z-[50] left-1/2 transform -translate-x-1/2">
-          Network
-        </h1>
+        <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-[50] flex items-center gap-4">
+          <h1 className="text-3xl font-bold text-black">Network</h1>
+          {projects.length > 0 && (
+            <ProjectSelector
+              projects={projects}
+              selectedProjectId={selectedProjectId}
+              onProjectChange={setSelectedProjectId}
+            />
+          )}
+        </div>
 
-        <GraphComponent projectId={projectId} />
+        {selectedProjectId > 0 && (
+          <GraphComponent projectId={selectedProjectId} />
+        )}
       </div>
     </div>
   );
